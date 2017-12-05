@@ -1,17 +1,14 @@
-ackage main
+package main
 
 import (
-	"github.com/gin-gonic/gin"
+	"github.com/PracticaAdvertising/src/rest"
+	"github.com/PracticaAdvertising/src/service"
 )
 
-func setupRouter() *gin.Engine {
-	r := gin.Default()
-	r.LoadHTMLGlob("templates/*")
-	r.GET("/search", services.CreateProduct)
-	return r
-}
-
 func main() {
-	r := setupRouter()
+	mainController := service.NewMainController()
+	server := rest.NewServer(mainController)
+
+	r := rest.SetupRouter(server)
 	r.Run(":8080")
 }
