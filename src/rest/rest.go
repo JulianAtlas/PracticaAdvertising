@@ -32,7 +32,6 @@ func (sv *Server) CreateProduct(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, crossCutting.ApiErr{err.Error(), http.StatusInternalServerError})
 		return
 	}
-
 }
 
 func (sv *Server) ListProducts(c *gin.Context) {
