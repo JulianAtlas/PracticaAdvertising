@@ -2,6 +2,10 @@ package domain
 
 import (
 	"fmt"
+
+	"net/http"
+
+	"github.com/PracticaAdvertising/src/crossCutting"
 )
 
 var currentId int = 0
@@ -11,9 +15,9 @@ type Product struct {
 	Nombre string
 }
 
-func NewProduct(nombre string) (*Product, error) {
+func NewProduct(nombre string) (*Product, *crossCutting.MyError) {
 	if nombre == "" {
-		return nil, fmt.Errorf("El nombre del producto no puede ser vacio")
+		return nil, &crossCutting.MyError{Error: fmt.Errorf("El nombre del producto no puede ser vacio"), Status: http.StatusBadRequest}
 	}
 	currentId++
 	return &Product{Nombre: nombre, Id: currentId}, nil

@@ -15,11 +15,11 @@ type Server struct {
 
 func SetupRouter(server *Server) *gin.Engine {
 	r := gin.Default()
-	r.POST("/create", server.CreateProduct)
-	r.POST("/delete", server.DeleteProduct)
-	r.POST("/update", server.UpdateProduct)
-	r.GET("/list", server.ListProducts)
-	r.GET("/search/:id", server.SearchProduct)
+	r.POST("/products", server.CreateProduct)
+	r.DELETE("/products/:id", server.DeleteProduct)
+	r.PUT("/products", server.UpdateProduct)
+	r.GET("/products", server.ListProducts)
+	r.GET("/products/:id", server.GetProduct)
 	return r
 }
 
@@ -30,15 +30,22 @@ func NewServer(aManager *service.MainController) *Server {
 func (sv *Server) CreateProduct(c *gin.Context) {
 	/*params*/
 	var err error
+	var myErr *crossCutting.MyError
 
 	var productDto crossCutting.ProductDto
-	c.Bind(&productDto)
-	productDto.Id, err = sv.ServiceManager.CreateProduct(&productDto)
-
+	err = c.Bind(&productDto)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, crossCutting.ApiErr{err.Error(), http.StatusInternalServerError})
+		c.JSON(http.StatusBadRequest, crossCutting.ApiErr{err.Error(), http.StatusBadRequest})
 		return
 	}
+
+	productDto.Id, myErr = sv.ServiceManager.CreateProduct(&productDto)
+
+	if myErr != nil {
+		c.JSON(myErr.Status, crossCutting.ApiErr{myErr.Error.Error(), myErr.Status})
+		return
+	}
+
 	c.JSON(http.StatusOK, productDto)
 	return
 
@@ -51,31 +58,52 @@ func (sv *Server) ListProducts(c *gin.Context) {
 }
 
 func (sv *Server) DeleteProduct(c *gin.Context) {
-	var productDto crossCutting.ProductDto
-	c.Bind(&productDto)
-	c.JSON(http.StatusOK, sv.ServiceManager.DeleteProduct(productDto.Id))
+	var id int
+	var err error
+	id, err = strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, crossCutting.ApiErr{err.Error(), http.StatusBadRequest})
+		return
+	}
+	var myErr *crossCutting.MyError = sv.ServiceManager.DeleteProduct(id)
+	if myErr != nil {
+		c.JSON(myErr.Status, crossCutting.ApiErr{myErr.Error.Error(), myErr.Status})
+		return
+	}
+	c.JSON(http.StatusOK, nil)
 }
 
 func (sv *Server) UpdateProduct(c *gin.Context) {
 	var err error
+	var myErr *crossCutting.MyError
 
 	var productDto crossCutting.ProductDto
-	c.Bind(&productDto)
-	productDto.Id, err = sv.ServiceManager.UpdateProduct(&productDto)
+
+	err = c.Bind(&productDto)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, crossCutting.ApiErr{err.Error(), http.StatusInternalServerError})
+		c.JSON(http.StatusBadRequest, crossCutting.ApiErr{err.Error(), http.StatusBadRequest})
+		return
+	}
+	productDto.Id, myErr = sv.ServiceManager.UpdateProduct(&productDto)
+	if myErr != nil {
+		c.JSON(myErr.Status, crossCutting.ApiErr{myErr.Error.Error(), myErr.Status})
 		return
 	}
 	c.JSON(http.StatusOK, productDto)
 	return
 }
 
-func (sv *Server) SearchProduct(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
-	productDto, err := sv.ServiceManager.SearchProduct(id)
-
+func (sv *Server) GetProduct(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, crossCutting.ApiErr{err.Error(), http.StatusInternalServerError})
+		c.JSON(http.StatusBadRequest, crossCutting.ApiErr{err.Error(), http.StatusBadRequest})
+		return
+	}
+
+	productDto, myErr := sv.ServiceManager.GetProductById(id)
+
+	if myErr != nil {
+		c.JSON(myErr.Status, crossCutting.ApiErr{myErr.Error.Error(), myErr.Status})
 		return
 	}
 	c.JSON(http.StatusOK, productDto)
