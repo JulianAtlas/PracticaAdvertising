@@ -29,6 +29,19 @@ func (mc *MainController) CreateProduct(productDto *crossCutting.ProductDto) err
 	return nil
 }
 
+
+//Es mejor devolver una lista de copias a todos los productos? O esta bien devolver los punteros originales?
 func (mc *MainController) ListProducts() map[int]*domain.Product {
-	return mc.Products
+	return *mc.copiyMapOfProducts()
 }
+
+
+func (mc *MainController) copiyMapOfProducts() *map[int]*domain.Product{
+	var res map[int]*domain.Product = map[int]*domain.Product{}
+	
+	for k,v := range mc.Products {	
+		res[k] = v.Copy()
+	}
+	return &res
+}
+

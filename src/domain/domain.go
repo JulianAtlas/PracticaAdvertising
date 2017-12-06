@@ -18,3 +18,7 @@ func NewProduct(nombre string) (*Product, error) {
 	currentId++
 	return &Product{Nombre: nombre, Id: currentId}, nil
 }
+
+func (p *Product) Copy() *Product {
+	return &Product{Nombre: p.Nombre, Id: p.Id}
+}
