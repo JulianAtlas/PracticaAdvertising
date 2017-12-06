@@ -103,7 +103,7 @@ func TestSearchProductById(t *testing.T) {
 	if err != nil {
 		t.Error(err.Error())
 	}
-	if productDto.Nombre != "teclado" {
+	if productDto.Nombre != nombreProducto {
 		t.Error("No se encuentra el producto pedido")
 	}
 
@@ -120,11 +120,13 @@ func TestUpdateProduct(t *testing.T) {
 		t.Error("Se agrego mal el producto")
 	}
 
-	mc.UpdateProduct(&crossCutting.ProductDto{Id: idProducto, Nombre: "Pelota"})
+	var otherNameForProduct string = "Pelota"
+
+	mc.UpdateProduct(&crossCutting.ProductDto{Id: idProducto, Nombre: otherNameForProduct})
 
 	productDto, _ = mc.SearchProduct(idProducto)
 
-	if productDto.Nombre != "Pelota" {
+	if productDto.Nombre != otherNameForProduct {
 		t.Error("El producto no se updeteo")
 	}
 
