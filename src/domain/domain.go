@@ -9,7 +9,7 @@ import (
 	"github.com/PracticaAdvertising/src/cc"
 )
 
-var currentId int = 0
+var CurrentId int = 0
 var mutex = &sync.Mutex{}
 
 type Product struct {
@@ -22,9 +22,9 @@ func NewProduct(name string) (*Product, *cc.MyError) {
 		return nil, &cc.MyError{Error: fmt.Errorf("El nombre del producto no puede ser vacio"), Status: http.StatusBadRequest}
 	}
 	mutex.Lock()
-	currentId++
+	CurrentId++
 	mutex.Unlock()
-	return &Product{Name: name, Id: currentId}, nil
+	return &Product{Name: name, Id: CurrentId}, nil
 }
 
 func (p *Product) Copy() *Product {

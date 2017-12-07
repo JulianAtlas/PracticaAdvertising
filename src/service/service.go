@@ -22,15 +22,16 @@ func NewMainController() *MainController {
 
 // }
 
-func (mc *MainController) CreateProduct(productDto *cc.ProductDto) (int, *cc.MyError) {
+func (mc *MainController) CreateProduct(productDto *cc.ProductDto) (*cc.ProductDto, *cc.MyError) {
 	aProduct, err := domain.NewProduct(productDto.Name)
 
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 
 	mc.Products[aProduct.Id] = aProduct
-	return aProduct.Id, nil
+
+	return toDto(aProduct), nil
 }
 
 //Es mejor devolver una lista de copias a todos los productos? O esta bien devolver los punteros originales?
