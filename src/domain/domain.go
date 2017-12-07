@@ -17,16 +17,17 @@ type Product struct {
 	Name string
 }
 
-func NewProduct(nombre string) (*Product, *cc.MyError) {
-	if nombre == "" {
+func NewProduct(name string) (*Product, *cc.MyError) {
+	if name == "" {
 		return nil, &cc.MyError{Error: fmt.Errorf("El nombre del producto no puede ser vacio"), Status: http.StatusBadRequest}
 	}
 	mutex.Lock()
 	currentId++
 	mutex.Unlock()
-	return &Product{Name: nombre, Id: currentId}, nil
+	return &Product{Name: name, Id: currentId}, nil
 }
 
 func (p *Product) Copy() *Product {
 	return &Product{Name: p.Name, Id: p.Id}
 }
+

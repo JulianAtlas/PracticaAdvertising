@@ -92,7 +92,7 @@ func (mc *MainController) mapOfProductsToDtoProducts() *map[int]*cc.ProductDto {
 func getProductById(mc *MainController, id int) (*domain.Product, *cc.MyError) {
 	product, existeProducto := mc.Products[id]
 	if !existeProducto {
-		return nil, &cc.MyError{fmt.Errorf("No existe producto con Id : " + strconv.Itoa(id)), http.StatusBadRequest}
+		return nil, &cc.MyError{fmt.Errorf("No existe producto con Id : " + strconv.Itoa(id)), http.StatusNotFound}
 	}
 	return product, nil
 }
