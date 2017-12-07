@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/PracticaAdvertising/src/crossCutting"
+	"github.com/PracticaAdvertising/src/cc"
 	"github.com/PracticaAdvertising/src/service"
 	"github.com/gin-gonic/gin"
 )
@@ -30,19 +30,19 @@ func NewServer(aManager *service.MainController) *Server {
 func (sv *Server) CreateProduct(c *gin.Context) {
 	/*params*/
 	var err error
-	var myErr *crossCutting.MyError
+	var myErr *cc.MyError
 
-	var productDto crossCutting.ProductDto
+	var productDto cc.ProductDto
 	err = c.Bind(&productDto)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, crossCutting.ApiErr{err.Error(), http.StatusBadRequest})
+		c.JSON(http.StatusBadRequest, cc.ApiErr{err.Error(), http.StatusBadRequest})
 		return
 	}
 
 	productDto.Id, myErr = sv.ServiceManager.CreateProduct(&productDto)
 
 	if myErr != nil {
-		c.JSON(myErr.Status, crossCutting.ApiErr{myErr.Error.Error(), myErr.Status})
+		c.JSON(myErr.Status, cc.ApiErr{myErr.Error.Error(), myErr.Status})
 		return
 	}
 
@@ -62,12 +62,12 @@ func (sv *Server) DeleteProduct(c *gin.Context) {
 	var err error
 	id, err = strconv.Atoi(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, crossCutting.ApiErr{err.Error(), http.StatusBadRequest})
+		c.JSON(http.StatusBadRequest, cc.ApiErr{err.Error(), http.StatusBadRequest})
 		return
 	}
-	var myErr *crossCutting.MyError = sv.ServiceManager.DeleteProduct(id)
+	var myErr *cc.MyError = sv.ServiceManager.DeleteProduct(id)
 	if myErr != nil {
-		c.JSON(myErr.Status, crossCutting.ApiErr{myErr.Error.Error(), myErr.Status})
+		c.JSON(myErr.Status, cc.ApiErr{myErr.Error.Error(), myErr.Status})
 		return
 	}
 	c.JSON(http.StatusOK, nil)
@@ -75,18 +75,18 @@ func (sv *Server) DeleteProduct(c *gin.Context) {
 
 func (sv *Server) UpdateProduct(c *gin.Context) {
 	var err error
-	var myErr *crossCutting.MyError
+	var myErr *cc.MyError
 
-	var productDto crossCutting.ProductDto
+	var productDto cc.ProductDto
 
 	err = c.Bind(&productDto)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, crossCutting.ApiErr{err.Error(), http.StatusBadRequest})
+		c.JSON(http.StatusBadRequest, cc.ApiErr{err.Error(), http.StatusBadRequest})
 		return
 	}
 	productDto.Id, myErr = sv.ServiceManager.UpdateProduct(&productDto)
 	if myErr != nil {
-		c.JSON(myErr.Status, crossCutting.ApiErr{myErr.Error.Error(), myErr.Status})
+		c.JSON(myErr.Status, cc.ApiErr{myErr.Error.Error(), myErr.Status})
 		return
 	}
 	c.JSON(http.StatusOK, productDto)
@@ -96,14 +96,14 @@ func (sv *Server) UpdateProduct(c *gin.Context) {
 func (sv *Server) GetProduct(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, crossCutting.ApiErr{err.Error(), http.StatusBadRequest})
+		c.JSON(http.StatusBadRequest, cc.ApiErr{err.Error(), http.StatusBadRequest})
 		return
 	}
 
 	productDto, myErr := sv.ServiceManager.GetProductById(id)
 
 	if myErr != nil {
-		c.JSON(myErr.Status, crossCutting.ApiErr{myErr.Error.Error(), myErr.Status})
+		c.JSON(myErr.Status, cc.ApiErr{myErr.Error.Error(), myErr.Status})
 		return
 	}
 	c.JSON(http.StatusOK, productDto)

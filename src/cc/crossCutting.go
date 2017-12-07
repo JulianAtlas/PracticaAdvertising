@@ -1,8 +1,8 @@
-package crossCutting
+package cc
 
 type ProductDto struct {
-	Id     int
-	Nombre string
+	Id   int
+	Name string
 }
 
 type ApiErr struct {

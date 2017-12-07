@@ -6,27 +6,27 @@ import (
 
 	"net/http"
 
-	"github.com/PracticaAdvertising/src/crossCutting"
+	"github.com/PracticaAdvertising/src/cc"
 )
 
 var currentId int = 0
 var mutex = &sync.Mutex{}
 
 type Product struct {
-	Id     int
-	Nombre string
+	Id   int
+	Name string
 }
 
-func NewProduct(nombre string) (*Product, *crossCutting.MyError) {
+func NewProduct(nombre string) (*Product, *cc.MyError) {
 	if nombre == "" {
-		return nil, &crossCutting.MyError{Error: fmt.Errorf("El nombre del producto no puede ser vacio"), Status: http.StatusBadRequest}
+		return nil, &cc.MyError{Error: fmt.Errorf("El nombre del producto no puede ser vacio"), Status: http.StatusBadRequest}
 	}
 	mutex.Lock()
 	currentId++
 	mutex.Unlock()
-	return &Product{Nombre: nombre, Id: currentId}, nil
+	return &Product{Name: nombre, Id: currentId}, nil
 }
 
 func (p *Product) Copy() *Product {
-	return &Product{Nombre: p.Nombre, Id: p.Id}
+	return &Product{Name: p.Name, Id: p.Id}
 }

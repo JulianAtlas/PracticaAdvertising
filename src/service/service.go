@@ -7,7 +7,7 @@ import (
 
 	"github.com/PracticaAdvertising/src/domain"
 
-	"github.com/PracticaAdvertising/src/crossCutting"
+	"github.com/PracticaAdvertising/src/cc"
 )
 
 type MainController struct {
@@ -22,8 +22,8 @@ func NewMainController() *MainController {
 
 // }
 
-func (mc *MainController) CreateProduct(productDto *crossCutting.ProductDto) (int, *crossCutting.MyError) {
-	aProduct, err := domain.NewProduct(productDto.Nombre)
+func (mc *MainController) CreateProduct(productDto *cc.ProductDto) (int, *cc.MyError) {
+	aProduct, err := domain.NewProduct(productDto.Name)
 
 	if err != nil {
 		return 0, err
@@ -39,7 +39,7 @@ func (mc *MainController) ListProducts() map[int]*domain.Product {
 }
 
 //Es mejor devolver una lista de copias a todos los productos? O esta bien devolver los punteros originales?
-func (mc *MainController) DeleteProduct(id int) *crossCutting.MyError {
+func (mc *MainController) DeleteProduct(id int) *cc.MyError {
 	_, err := getProductById(mc, id)
 
 	if err != nil {
@@ -50,25 +50,25 @@ func (mc *MainController) DeleteProduct(id int) *crossCutting.MyError {
 	return nil
 }
 
-func (mc *MainController) UpdateProduct(productDto *crossCutting.ProductDto) (int, *crossCutting.MyError) {
+func (mc *MainController) UpdateProduct(productDto *cc.ProductDto) (int, *cc.MyError) {
 	aProduct, myError := getProductById(mc, productDto.Id)
 
 	if myError != nil {
 		return 0, myError
 	}
 
-	aProduct.Nombre = productDto.Nombre
+	aProduct.Name = productDto.Name
 	return aProduct.Id, nil
 }
 
-func (mc *MainController) GetProductById(id int) (*crossCutting.ProductDto, *crossCutting.MyError) {
+func (mc *MainController) GetProductById(id int) (*cc.ProductDto, *cc.MyError) {
 	aProduct, myErr := getProductById(mc, id)
 
 	if myErr != nil {
 		return nil, myErr
 	}
 
-	return &crossCutting.ProductDto{Id: aProduct.Id, Nombre: aProduct.Nombre}, nil
+	return &cc.ProductDto{Id: aProduct.Id, Name: aProduct.Name}, nil
 }
 
 func (mc *MainController) copyMapOfProducts() *map[int]*domain.Product {
@@ -80,8 +80,8 @@ func (mc *MainController) copyMapOfProducts() *map[int]*domain.Product {
 	return &res
 }
 
-func (mc *MainController) mapOfProductsToDtoProducts() *map[int]*crossCutting.ProductDto {
-	var res map[int]*crossCutting.ProductDto = map[int]*crossCutting.ProductDto{}
+func (mc *MainController) mapOfProductsToDtoProducts() *map[int]*cc.ProductDto {
+	var res map[int]*cc.ProductDto = map[int]*cc.ProductDto{}
 
 	for k, v := range mc.Products {
 		res[k] = toDto(v)
@@ -89,14 +89,14 @@ func (mc *MainController) mapOfProductsToDtoProducts() *map[int]*crossCutting.Pr
 	return &res
 }
 
-func getProductById(mc *MainController, id int) (*domain.Product, *crossCutting.MyError) {
+func getProductById(mc *MainController, id int) (*domain.Product, *cc.MyError) {
 	product, existeProducto := mc.Products[id]
 	if !existeProducto {
-		return nil, &crossCutting.MyError{fmt.Errorf("No existe producto con Id : " + strconv.Itoa(id)), http.StatusBadRequest}
+		return nil, &cc.MyError{fmt.Errorf("No existe producto con Id : " + strconv.Itoa(id)), http.StatusBadRequest}
 	}
 	return product, nil
 }
 
-func toDto(p *domain.Product) *crossCutting.ProductDto {
-	return &crossCutting.ProductDto{Id: p.Id, Nombre: p.Nombre}
+func toDto(p *domain.Product) *cc.ProductDto {
+	return &cc.ProductDto{Id: p.Id, Name: p.Name}
 }

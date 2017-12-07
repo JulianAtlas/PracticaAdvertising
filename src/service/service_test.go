@@ -5,19 +5,19 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/PracticaAdvertising/src/crossCutting"
+	"github.com/PracticaAdvertising/src/cc"
 	"github.com/PracticaAdvertising/src/service"
 )
 
 func TestTheNewProductIsAddedToTheManagerListProduct(t *testing.T) {
 	mc := service.NewMainController()
 	var nombreProducto string = "botella"
-	_, myErr := mc.CreateProduct(&crossCutting.ProductDto{Nombre: nombreProducto})
+	_, myErr := mc.CreateProduct(&cc.ProductDto{Name: nombreProducto})
 
 	if len(mc.Products) != 1 {
 		t.Error("La longitud es diferente de un producto")
 	}
-	if mc.Products[1].Nombre != nombreProducto {
+	if mc.Products[1].Name != nombreProducto {
 		t.Error("El nombre de producto no coincide con el que agregue")
 	}
 	if myErr != nil {
@@ -29,11 +29,11 @@ func TestTheNewProductIsAddedToTheManagerListProduct(t *testing.T) {
 func TestListItemsReturnsAllItems(t *testing.T) {
 	mc := service.NewMainController()
 	var nombreProducto1 string = "celular"
-	mc.CreateProduct(&crossCutting.ProductDto{Nombre: nombreProducto1})
+	mc.CreateProduct(&cc.ProductDto{Name: nombreProducto1})
 	var nombreProducto2 string = "celular2"
-	mc.CreateProduct(&crossCutting.ProductDto{Nombre: nombreProducto2})
+	mc.CreateProduct(&cc.ProductDto{Name: nombreProducto2})
 	var nombreProducto3 string = "celular3"
-	mc.CreateProduct(&crossCutting.ProductDto{Nombre: nombreProducto3})
+	mc.CreateProduct(&cc.ProductDto{Name: nombreProducto3})
 
 	//operacion
 	products := mc.ListProducts()
@@ -42,8 +42,8 @@ func TestListItemsReturnsAllItems(t *testing.T) {
 	if len(products) == 0 {
 		t.Error("el mapa no deberia estar vacio")
 	}
-	fmt.Println(products[2].Nombre)
-	if products[2].Nombre != nombreProducto2 {
+	fmt.Println(products[2].Name)
+	if products[2].Name != nombreProducto2 {
 		t.Error("el nombre en el mapa es incorrecto")
 	}
 	if len(products) != 3 {
@@ -54,7 +54,7 @@ func TestListItemsReturnsAllItems(t *testing.T) {
 func TestDeleteProductRemovesIt(t *testing.T) {
 	mc := service.NewMainController()
 	var nombreProducto1 string = "computadora"
-	id, _ := mc.CreateProduct(&crossCutting.ProductDto{Nombre: nombreProducto1})
+	id, _ := mc.CreateProduct(&cc.ProductDto{Name: nombreProducto1})
 
 	//operacion
 	myErr := mc.DeleteProduct(id)
@@ -72,7 +72,7 @@ func TestDeleteProductRemovesIt(t *testing.T) {
 func TestExpectErrorInInvalidIdWhenDelete(t *testing.T) {
 	mc := service.NewMainController()
 	var nombreProducto1 string = "billetera"
-	validId, _ := mc.CreateProduct(&crossCutting.ProductDto{Nombre: nombreProducto1})
+	validId, _ := mc.CreateProduct(&cc.ProductDto{Name: nombreProducto1})
 
 	invalidId := validId - 10
 
@@ -96,14 +96,14 @@ func TestExpectErrorInInvalidIdWhenDelete(t *testing.T) {
 func TestSearchProductById(t *testing.T) {
 	mc := service.NewMainController()
 	var nombreProducto string = "teclado"
-	idProducto, _ := mc.CreateProduct(&crossCutting.ProductDto{Nombre: nombreProducto})
+	idProducto, _ := mc.CreateProduct(&cc.ProductDto{Name: nombreProducto})
 
 	productDto, myErr := mc.GetProductById(idProducto)
 
 	if myErr != nil {
 		t.Error(myErr.Error.Error())
 	}
-	if productDto.Nombre != nombreProducto {
+	if productDto.Name != nombreProducto {
 		t.Error("No se encuentra el producto pedido")
 	}
 
@@ -112,21 +112,21 @@ func TestSearchProductById(t *testing.T) {
 func TestUpdateProduct(t *testing.T) {
 	mc := service.NewMainController()
 	var nombreProducto string = "gorra"
-	idProducto, _ := mc.CreateProduct(&crossCutting.ProductDto{Nombre: nombreProducto})
+	idProducto, _ := mc.CreateProduct(&cc.ProductDto{Name: nombreProducto})
 
 	productDto, _ := mc.GetProductById(idProducto)
 
-	if productDto.Nombre != nombreProducto {
+	if productDto.Name != nombreProducto {
 		t.Error("Se agrego mal el producto")
 	}
 
 	var otherNameForProduct string = "Pelota"
 
-	mc.UpdateProduct(&crossCutting.ProductDto{Id: idProducto, Nombre: otherNameForProduct})
+	mc.UpdateProduct(&cc.ProductDto{Id: idProducto, Name: otherNameForProduct})
 
 	productDto, _ = mc.GetProductById(idProducto)
 
-	if productDto.Nombre != otherNameForProduct {
+	if productDto.Name != otherNameForProduct {
 		t.Error("El producto no se updeteo")
 	}
 
