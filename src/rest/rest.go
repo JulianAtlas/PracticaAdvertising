@@ -46,7 +46,7 @@ func (sv *Server) CreateProduct(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, productDto)
+	c.JSON(http.StatusCreated, productDto)
 	return
 
 }

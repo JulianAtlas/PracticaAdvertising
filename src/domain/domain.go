@@ -2,6 +2,7 @@ package domain
 
 import (
 	"fmt"
+	"sync"
 
 	"net/http"
 
@@ -9,6 +10,7 @@ import (
 )
 
 var currentId int = 0
+var mutex = &sync.Mutex{}
 
 type Product struct {
 	Id     int
@@ -19,7 +21,9 @@ func NewProduct(nombre string) (*Product, *crossCutting.MyError) {
 	if nombre == "" {
 		return nil, &crossCutting.MyError{Error: fmt.Errorf("El nombre del producto no puede ser vacio"), Status: http.StatusBadRequest}
 	}
+	mutex.Lock()
 	currentId++
+	mutex.Unlock()
 	return &Product{Nombre: nombre, Id: currentId}, nil
 }
 

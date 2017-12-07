@@ -80,10 +80,23 @@ func (mc *MainController) copyMapOfProducts() *map[int]*domain.Product {
 	return &res
 }
 
+func (mc *MainController) mapOfProductsToDtoProducts() *map[int]*crossCutting.ProductDto {
+	var res map[int]*crossCutting.ProductDto = map[int]*crossCutting.ProductDto{}
+
+	for k, v := range mc.Products {
+		res[k] = toDto(v)
+	}
+	return &res
+}
+
 func getProductById(mc *MainController, id int) (*domain.Product, *crossCutting.MyError) {
 	product, existeProducto := mc.Products[id]
 	if !existeProducto {
 		return nil, &crossCutting.MyError{fmt.Errorf("No existe producto con Id : " + strconv.Itoa(id)), http.StatusBadRequest}
 	}
 	return product, nil
+}
+
+func toDto(p *domain.Product) *crossCutting.ProductDto {
+	return &crossCutting.ProductDto{Id: p.Id, Nombre: p.Nombre}
 }
