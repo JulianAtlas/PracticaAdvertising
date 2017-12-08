@@ -4,23 +4,21 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-
+	"sync"
 	"github.com/PracticaAdvertising/src/domain"
-
 	"github.com/PracticaAdvertising/src/cc"
 )
 
+var mutex = &sync.Mutex{}
+
 type MainController struct {
+	CurrentId int
 	Products map[int]*domain.Product
 }
 
 func NewMainController() *MainController {
-	return &MainController{Products: map[int]*domain.Product{}}
+	return &MainController{CurrentId: 1, Products: map[int]*domain.Product{}}
 }
-
-// func SearchProduct(c *gin.Contex) {
-
-// }
 
 func (mc *MainController) CreateProduct(productDto *cc.ProductDto) (*cc.ProductDto, *cc.MyError) {
 	aProduct, err := domain.NewProduct(productDto.Name)
@@ -29,8 +27,11 @@ func (mc *MainController) CreateProduct(productDto *cc.ProductDto) (*cc.ProductD
 		return nil, err
 	}
 
+	aProduct.Id = mc.CurrentId
+	mutex.Lock()
+	mc.CurrentId++
+	mutex.Unlock()
 	mc.Products[aProduct.Id] = aProduct
-
 	return toDto(aProduct), nil
 }
 

@@ -1,24 +1,21 @@
 package service_test
 
 import (
-	//"fmt"
 	"strconv"
 	"testing"
 
 	"github.com/PracticaAdvertising/src/cc"
 	"github.com/PracticaAdvertising/src/service"
-	"github.com/PracticaAdvertising/src/domain"
 )
-	var mc *service.MainController
+
+var mc *service.MainController
 
 func setupTest(){
 	mc = nil
 	mc = service.NewMainController()
-	domain.CurrentId = 0
 }
 
 func TestTheNewProductIsAddedToTheManagerListProduct(t *testing.T) {
-
 	setupTest()
 	product, myErr := mc.CreateProduct(&cc.ProductDto{Name: "producto1"})
 

@@ -2,15 +2,9 @@ package domain
 
 import (
 	"fmt"
-	"sync"
-
 	"net/http"
-
 	"github.com/PracticaAdvertising/src/cc"
 )
-
-var CurrentId int = 0
-var mutex = &sync.Mutex{}
 
 type Product struct {
 	Id   int
@@ -21,10 +15,7 @@ func NewProduct(name string) (*Product, *cc.MyError) {
 	if name == "" {
 		return nil, &cc.MyError{Error: fmt.Errorf("El nombre del producto no puede ser vacio"), Status: http.StatusBadRequest}
 	}
-	mutex.Lock()
-	CurrentId++
-	mutex.Unlock()
-	return &Product{Name: name, Id: CurrentId}, nil
+	return &Product{Name: name}, nil
 }
 
 func (p *Product) Copy() *Product {
