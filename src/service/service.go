@@ -9,15 +9,15 @@ import (
 	"github.com/PracticaAdvertising/src/cc"
 )
 
-var mutex = &sync.Mutex{}
 
 type MainController struct {
+	mutex *sync.Mutex
 	CurrentId int
 	Products map[int]*domain.Product
 }
 
 func NewMainController() *MainController {
-	return &MainController{CurrentId: 1, Products: map[int]*domain.Product{}}
+	return &MainController{CurrentId: 1, Products: map[int]*domain.Product{},  mutex:&sync.Mutex{}}
 }
 
 func (mc *MainController) CreateProduct(productDto *cc.ProductDto) (*cc.ProductDto, *cc.MyError) {
@@ -28,9 +28,9 @@ func (mc *MainController) CreateProduct(productDto *cc.ProductDto) (*cc.ProductD
 	}
 
 	aProduct.Id = mc.CurrentId
-	mutex.Lock()
+	mc.mutex.Lock()
 	mc.CurrentId++
-	mutex.Unlock()
+	mc.mutex.Unlock()
 	mc.Products[aProduct.Id] = aProduct
 	return toDto(aProduct), nil
 }
