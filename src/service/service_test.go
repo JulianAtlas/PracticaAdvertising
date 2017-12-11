@@ -15,7 +15,7 @@ func setupTest(){
 	mc = service.NewMainController()
 }
 
-func TestTheNewProductIsAddedToTheManagerListProduct(t *testing.T) {
+func TestWhenProductIsCreatedThenItsAddedCorrectlyToProductList(t *testing.T) {
 	setupTest()
 	product, myErr := mc.CreateProduct(&cc.ProductDto{Name: "producto1"})
 
@@ -31,7 +31,7 @@ func TestTheNewProductIsAddedToTheManagerListProduct(t *testing.T) {
 }
 
 
-func TestListItemsReturnsAllItems(t *testing.T) {
+func TestWhenListItemsThenTheyAreListedCorrectly(t *testing.T) {
 	setupTest()
 	var nombreProducto1 string = "celular"
 	mc.CreateProduct(&cc.ProductDto{Name: nombreProducto1})
@@ -56,7 +56,7 @@ func TestListItemsReturnsAllItems(t *testing.T) {
 	}
 }
 
-func TestDeleteProductRemovesIt(t *testing.T) {
+func TestWhenProductIsDeletedThenItsRemovedFromProductList(t *testing.T) {
 	setupTest()
 	var nombreProducto1 string = "computadora"
 	product, _ := mc.CreateProduct(&cc.ProductDto{Name: nombreProducto1})
@@ -74,7 +74,7 @@ func TestDeleteProductRemovesIt(t *testing.T) {
 	}
 }
 
-func TestExpectErrorInInvalidIdWhenDelete(t *testing.T) {
+func TestWhenDeleteProductWithInvalidIdThenNoProductIsDeleted(t *testing.T) {
 	setupTest()
 	var nombreProducto1 string = "billetera"
 	product, _ := mc.CreateProduct(&cc.ProductDto{Name: nombreProducto1})
@@ -98,7 +98,7 @@ func TestExpectErrorInInvalidIdWhenDelete(t *testing.T) {
 	}
 }
 
-func TestSearchProductById(t *testing.T) {
+func TestWhenGettingProductByIdThenCorrectProductIsReturned(t *testing.T) {
 	setupTest()
 	var nombreProducto string = "teclado"
 	product, _ := mc.CreateProduct(&cc.ProductDto{Name: nombreProducto})
@@ -114,7 +114,7 @@ func TestSearchProductById(t *testing.T) {
 
 }
 
-func TestUpdateProduct(t *testing.T) {
+func TestWhenProductIsUpdatedThenChangesAreSaved(t *testing.T) {
 	setupTest()
 	var nombreProducto string = "gorra"
 	product, _ := mc.CreateProduct(&cc.ProductDto{Name: nombreProducto})

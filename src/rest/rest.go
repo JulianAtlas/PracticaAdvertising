@@ -39,7 +39,7 @@ func (sv *Server) CreateProduct(c *gin.Context) {
 		return
 	}
 
-	productDto, myErr = sv.ServiceManager.CreateProduct(&productDto)
+	productDto, myErr = sv.ServiceManager.CreateProduct(productDto)
 
 	if myErr != nil {
 		c.JSON(myErr.Status, cc.ApiErr{myErr.Error.Error(), myErr.Status})
