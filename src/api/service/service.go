@@ -4,33 +4,35 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-
+	"sync"
 	"github.com/PracticaAdvertising/src/api/domain"
-
 	"github.com/PracticaAdvertising/src/api/cc"
 )
 
+
 type MainController struct {
+	mutex *sync.Mutex
+	CurrentId int
 	Products map[int]*domain.Product
 }
 
 func NewMainController() *MainController {
-	return &MainController{Products: map[int]*domain.Product{}}
+	return &MainController{CurrentId: 1, Products: map[int]*domain.Product{},  mutex:&sync.Mutex{}}
 }
 
-// func SearchProduct(c *gin.Contex) {
-
-// }
-
-func (mc *MainController) CreateProduct(productDto *cc.ProductDto) (int, *cc.MyError) {
+func (mc *MainController) CreateProduct(productDto *cc.ProductDto) (*cc.ProductDto, *cc.MyError) {
 	aProduct, err := domain.NewProduct(productDto.Name)
 
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 
+	aProduct.Id = mc.CurrentId
+	mc.mutex.Lock()
+	mc.CurrentId++
+	mc.mutex.Unlock()
 	mc.Products[aProduct.Id] = aProduct
-	return aProduct.Id, nil
+	return toDto(aProduct), nil
 }
 
 //Es mejor devolver una lista de copias a todos los productos? O esta bien devolver los punteros originales?

@@ -1,7 +1,6 @@
 package service_test
 
 import (
-	"fmt"
 	"strconv"
 	"testing"
 
@@ -9,15 +8,21 @@ import (
 	"github.com/PracticaAdvertising/src/api/service"
 )
 
-func TestTheNewProductIsAddedToTheManagerListProduct(t *testing.T) {
-	mc := service.NewMainController()
-	var nombreProducto string = "botella"
-	_, myErr := mc.CreateProduct(&cc.ProductDto{Name: nombreProducto})
+var mc *service.MainController
+
+func setupTest(){
+	mc = nil
+	mc = service.NewMainController()
+}
+
+func TestWhenProductIsCreatedThenItsAddedCorrectlyToProductList(t *testing.T) {
+	setupTest()
+	product, myErr := mc.CreateProduct(&cc.ProductDto{Name: "producto1"})
 
 	if len(mc.Products) != 1 {
 		t.Error("La longitud es diferente de un producto")
 	}
-	if mc.Products[1].Name != nombreProducto {
+	if mc.Products[1].Name != product.Name {
 		t.Error("El nombre de producto no coincide con el que agregue")
 	}
 	if myErr != nil {
@@ -25,9 +30,9 @@ func TestTheNewProductIsAddedToTheManagerListProduct(t *testing.T) {
 	}
 }
 
-//por que este test pasa cuando lo corremos individualmente pero no cuando corremos todo el package?
-func TestListItemsReturnsAllItems(t *testing.T) {
-	mc := service.NewMainController()
+
+func TestWhenListItemsThenTheyAreListedCorrectly(t *testing.T) {
+	setupTest()
 	var nombreProducto1 string = "celular"
 	mc.CreateProduct(&cc.ProductDto{Name: nombreProducto1})
 	var nombreProducto2 string = "celular2"
@@ -42,7 +47,7 @@ func TestListItemsReturnsAllItems(t *testing.T) {
 	if len(products) == 0 {
 		t.Error("el mapa no deberia estar vacio")
 	}
-	fmt.Println(products[2].Name)
+
 	if products[2].Name != nombreProducto2 {
 		t.Error("el nombre en el mapa es incorrecto")
 	}
@@ -51,13 +56,13 @@ func TestListItemsReturnsAllItems(t *testing.T) {
 	}
 }
 
-func TestDeleteProductRemovesIt(t *testing.T) {
-	mc := service.NewMainController()
+func TestWhenProductIsDeletedThenItsRemovedFromProductList(t *testing.T) {
+	setupTest()
 	var nombreProducto1 string = "computadora"
-	id, _ := mc.CreateProduct(&cc.ProductDto{Name: nombreProducto1})
+	product, _ := mc.CreateProduct(&cc.ProductDto{Name: nombreProducto1})
 
 	//operacion
-	myErr := mc.DeleteProduct(id)
+	myErr := mc.DeleteProduct(product.Id)
 
 	//test
 	if myErr != nil {
@@ -69,12 +74,12 @@ func TestDeleteProductRemovesIt(t *testing.T) {
 	}
 }
 
-func TestExpectErrorInInvalidIdWhenDelete(t *testing.T) {
-	mc := service.NewMainController()
+func TestWhenDeleteProductWithInvalidIdThenNoProductIsDeleted(t *testing.T) {
+	setupTest()
 	var nombreProducto1 string = "billetera"
-	validId, _ := mc.CreateProduct(&cc.ProductDto{Name: nombreProducto1})
+	product, _ := mc.CreateProduct(&cc.ProductDto{Name: nombreProducto1})
 
-	invalidId := validId - 10
+	invalidId := product.Id - 10
 
 	//operacion
 	myErr := mc.DeleteProduct(invalidId)
@@ -93,12 +98,12 @@ func TestExpectErrorInInvalidIdWhenDelete(t *testing.T) {
 	}
 }
 
-func TestSearchProductById(t *testing.T) {
-	mc := service.NewMainController()
+func TestWhenGettingProductByIdThenCorrectProductIsReturned(t *testing.T) {
+	setupTest()
 	var nombreProducto string = "teclado"
-	idProducto, _ := mc.CreateProduct(&cc.ProductDto{Name: nombreProducto})
+	product, _ := mc.CreateProduct(&cc.ProductDto{Name: nombreProducto})
 
-	productDto, myErr := mc.GetProductById(idProducto)
+	productDto, myErr := mc.GetProductById(product.Id)
 
 	if myErr != nil {
 		t.Error(myErr.Error.Error())
@@ -109,12 +114,12 @@ func TestSearchProductById(t *testing.T) {
 
 }
 
-func TestUpdateProduct(t *testing.T) {
-	mc := service.NewMainController()
+func TestWhenProductIsUpdatedThenChangesAreSaved(t *testing.T) {
+	setupTest()
 	var nombreProducto string = "gorra"
-	idProducto, _ := mc.CreateProduct(&cc.ProductDto{Name: nombreProducto})
+	product, _ := mc.CreateProduct(&cc.ProductDto{Name: nombreProducto})
 
-	productDto, _ := mc.GetProductById(idProducto)
+	productDto, _ := mc.GetProductById(product.Id)
 
 	if productDto.Name != nombreProducto {
 		t.Error("Se agrego mal el producto")
@@ -122,9 +127,9 @@ func TestUpdateProduct(t *testing.T) {
 
 	var otherNameForProduct string = "Pelota"
 
-	mc.UpdateProduct(&cc.ProductDto{Id: idProducto, Name: otherNameForProduct})
+	mc.UpdateProduct(&cc.ProductDto{Id: product.Id, Name: otherNameForProduct})
 
-	productDto, _ = mc.GetProductById(idProducto)
+	productDto, _ = mc.GetProductById(product.Id)
 
 	if productDto.Name != otherNameForProduct {
 		t.Error("El producto no se updeteo")

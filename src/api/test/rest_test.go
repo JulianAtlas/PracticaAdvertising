@@ -27,5 +27,5 @@ func TestWhenPassACorrectJsonGetOkResponseCode(t *testing.T) {
 	asserter.Equal(http.StatusCreated, resp.StatusCode)
 	buff ,_:= ioutil.ReadAll(resp.Body)
 	asserter.Equal(string(buff), `{"Id":1,"Name":"pelota"}`)
-	
+
 }
