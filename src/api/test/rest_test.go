@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"io/ioutil"
 	"strconv"
+
 )
 
 func TestWhenCreateProductGetOkResponseCode(t *testing.T) {
@@ -135,3 +136,33 @@ func TestWhenDeleteAExistingProductThenResponseIsStatusOk(t *testing.T){
 
 	asserter.Equal(http.StatusOK, resp.StatusCode)
 }
+
+func TestWhenListProductThenAllProductsAreReturned(t *testing.T) {
+	asserter := assert.New(t)
+
+	var jsonStr = []byte(`{"Name":"pelota"}`)
+	req, _ := http.NewRequest("POST", ServerPath+ "/products", bytes.NewBuffer(jsonStr))
+	req.Header.Set("Content-Type", "application/json")
+	client := &http.Client{}
+	client.Do(req)
+
+	var jsonStr2 = []byte(`{"Name":"botella"}`)
+	req2, _ := http.NewRequest("POST", ServerPath+ "/products", bytes.NewBuffer(jsonStr2))
+	req2.Header.Set("Content-Type", "application/json")
+	resp,_ :=client.Do(req2)
+
+	if resp.StatusCode != http.StatusCreated{
+		t.Error("No se creo el objeto")
+	}
+
+	req3, _ := http.NewRequest("GET", ServerPath+ "/products", nil)
+	resp,_ = client.Do(req3)
+
+
+	buff ,_ := ioutil.ReadAll(resp.Body)
+
+	asserter.Equal(string(buff), `{"1":{"Id":1,"Name":"pelota"},"2":{"Id":2,"Name":"botella"}}`)
+
+}
+
+

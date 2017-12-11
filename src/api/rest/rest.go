@@ -94,7 +94,7 @@ func (sv *Server) UpdateProduct(c *gin.Context) {
 }
 
 func (sv *Server) GetProduct(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))x
+	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, cc.ApiErr{err.Error(), http.StatusBadRequest})
 		return
