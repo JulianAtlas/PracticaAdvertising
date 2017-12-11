@@ -9,7 +9,7 @@ import (
 	"io/ioutil"
 )
 
-func TestWhenPassACorrectJsonGetOkResponseCode(t *testing.T) {
+func TestWhenCreateProductPassGetOkResponseCode(t *testing.T) {
 	asserter := assert.New(t)
 
 	var jsonStr = []byte(`{"Name":"pelota"}`)
