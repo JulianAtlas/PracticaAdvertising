@@ -13,7 +13,11 @@ type Server struct {
 	ServiceManager *service.MainController
 }
 
-func SetupRouter(server *Server) *gin.Engine {
+func SetupRouter() *gin.Engine {
+	mainController := service.NewMainController()
+	server := NewServer(mainController)
+
+
 	r := gin.Default()
 	r.POST("/products", server.CreateProduct)
 	r.DELETE("/products/:id", server.DeleteProduct)
